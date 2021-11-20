@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
+dotenv.config();
 import mongoose from "mongoose";
-dotenv.config({ path: '../config/.env' });
 import app from './express.js';
 
 import Template from './../template.js'

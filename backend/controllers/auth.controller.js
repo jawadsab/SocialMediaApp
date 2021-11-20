@@ -1,4 +1,4 @@
-import User from '../models/user.model';
+import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import expressJwt from 'express-jwt';
 
@@ -13,7 +13,7 @@ const signin = async (req, res) => {
         .status('401')
         .send({ error: "Email and password don't match." });
     }
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ _id: user._id }, "secajkshdsaret");
     res.cookie('token', token, { expire: new Date() + 9999 });
     return res.json({
       token,
@@ -33,11 +33,14 @@ const signout = (req, res) => {
     message: 'signed out',
   });
 };
+
 const requireSignin = expressJwt({
-  secret: process.env.JWT_SECRET,
+  secret: "secajkshdsaret",
+  algorithms: ['HS256'],
   userProperty: 'auth',
 });
-const hasAuthorization = (req, res) => {
+const hasAuthorization = (req, res,next) => {
+  console.log("AUTHHHHHHHHHHHHH")
   const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
   if (!authorized) {
     return res.status('403').json({
