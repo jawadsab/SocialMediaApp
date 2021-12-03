@@ -49,3 +49,23 @@
 .register-btn:hover {
   background-color: #023e8a;
 }
+
+.message-container {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.success {
+  background: #52b788;
+}
+
+.error {
+  background: red;
+}
+
+.input-error {
+  border: 1px solid red !important;
+}
