@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast, Slide } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './SignupStyles.css';
 
-import api from '../../api';
+import { create } from '../../api/user/api-user';
+
+const SuccessMessge = () => {
+  return <span>You can now signin in here</span>;
+};
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -10,19 +16,24 @@ const Signup = () => {
     password: '',
     success: false,
     message: '',
-    field:''
+    field: '',
   });
-  const { name, email, password, success, message,field} = formData;
+  const { name, email, password, success, message, field } = formData;
 
   const handleInputChange = (fieldName) => (event) => {
-    setFormData({ ...formData, [fieldName]: event.target.value,message:"",field:"" });
+    setFormData({
+      ...formData,
+      [fieldName]: event.target.value,
+      message: '',
+      field: '',
+    });
   };
 
   const submitForm = (e) => {
-    createUser(formData)
-      .then((response) => {
-        const { success, msg } = response.data;
-        console.log(response);
+    const { name, email, password } = formData;
+    create({ name, email, password })
+      .then((res) => {
+        const { success, msg } = res.data;
         setFormData({
           ...formData,
           name: '',
@@ -33,20 +44,15 @@ const Signup = () => {
         });
       })
       .catch((err) => {
-        const { success, msg,field } = err.response.data;
+        const { success, msg, field } = err.response.data;
         console.log(field);
         setFormData({
           ...formData,
           success,
           message: msg,
-          field
+          field,
         });
       });
-  };
-
-  const createUser = async (formData) => {
-    const response = await api.post('/api/users', formData);
-    return response;
   };
 
   const messageContainer = () => {
@@ -61,8 +67,14 @@ const Signup = () => {
     }
   };
 
+  const notify = () => {
+    toast.success(<SuccessMessge />, { autoClose: false });
+  };
+
   return (
     <div className="signup-page">
+      {success && notify()}
+      <ToastContainer transition={Slide} />
       <div className="signup-container">
         <h2>Register</h2>
         <div className="field">
@@ -72,6 +84,7 @@ const Signup = () => {
           <input
             type="text"
             placeholder="Enter your username"
+            className={field === 'name' ? 'input-error' : ''}
             name="name"
             id="name"
             value={name}
@@ -85,7 +98,7 @@ const Signup = () => {
           <input
             type="email"
             placeholder="Enter your email"
-            className={field === "email" ? "input-error":""}
+            className={field === 'email' ? 'input-error' : ''}
             name="email"
             id="email"
             value={email}
@@ -98,7 +111,7 @@ const Signup = () => {
           </label>
           <input
             type="text"
-            className={field === "password" ? "input-error":""}
+            className={field === 'password' ? 'input-error' : ''}
             placeholder="Enter password"
             name="password"
             id="password"

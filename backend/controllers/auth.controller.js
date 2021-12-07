@@ -1,21 +1,35 @@
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import expressJwt from 'express-jwt';
+import { validationResult } from 'express-validator';
 
 const signin = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      msg: errors.array()[0].msg,
+      field: errors.array()[0].param,
+    });
+  }
   try {
-    let user = await User.findOne({ email: req.body.email });
+    const { email, password } = req.body;
+    let user = await User.findOne({ email });
     if (!user) {
-      return res.status('400').json({ error: 'User not found' });
-    }
-    if (!user.authenticate(req.body.password)) {
       return res
-        .status('401')
-        .send({ error: "Email and password don't match." });
+        .status(400)
+        .json({ success: false, msg: 'This user doesnot exists' });
     }
-    const token = jwt.sign({ _id: user._id }, "secajkshdsaret");
+    if (!user.authenticate(password)) {
+      return res
+        .status(401)
+        .send({ success: false, msg: "Email and password don't match." });
+    }
+    const token = jwt.sign({ _id: user._id }, 'secajkshdsaret');
     res.cookie('token', token, { expire: new Date() + 9999 });
     return res.json({
+      success: true,
+      msg: 'Signin successfull',
       token,
       user: {
         _id: user._id,
@@ -24,7 +38,7 @@ const signin = async (req, res) => {
       },
     });
   } catch (err) {
-    return res.status('401').json({ error: 'Could not sign in' });
+    return res.status('401').json({ success: false, msg: err.message });
   }
 };
 const signout = (req, res) => {
@@ -35,12 +49,12 @@ const signout = (req, res) => {
 };
 
 const requireSignin = expressJwt({
-  secret: "secajkshdsaret",
+  secret: 'secajkshdsaret',
   algorithms: ['HS256'],
   userProperty: 'auth',
 });
-const hasAuthorization = (req, res,next) => {
-  console.log("AUTHHHHHHHHHHHHH")
+const hasAuthorization = (req, res, next) => {
+  console.log('AUTHHHHHHHHHHHHH');
   const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
   if (!authorized) {
     return res.status('403').json({
