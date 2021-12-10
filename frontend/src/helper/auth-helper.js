@@ -1,4 +1,4 @@
-import { signout } from '../api/auth/api-auth';
+import { signout,isLoggedIn } from '../api/auth/api-auth';
 
 export const authenticate = (jwt, cb) => {
   if (typeof window !== 'undefined') {
@@ -10,9 +10,18 @@ export const authenticate = (jwt, cb) => {
 export const isAuthenticated = () => {
   if (typeof window == 'undefined') return false;
 
-  if (localStorage.getItem('jwt'))
-    return JSON.parse(localStorage.getItem('jwt'));
-  else return false;
+  if (localStorage.getItem('jwt')) {
+    console.log("JET")
+    const {token} = JSON.parse(localStorage.getItem('jwt'))
+    isLoggedIn(token).then(data => {
+      console.log(data)
+    })
+
+
+    console.log("Log",isLoggedIn(token))
+
+   
+  } else return false;
 };
 
 export const clearJWT = (cb) => {

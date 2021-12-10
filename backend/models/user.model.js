@@ -28,12 +28,9 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.methods = {
   authenticate: function (plainText) {
-    console.log("Plain text",plainText);
-    console.log(this.encryptPassword(plainText)===this.hashed_password)
     return this.encryptPassword(plainText) === this.hashed_password;
   },
   encryptPassword: function (password) {
-    console.log("Encrypting password",password);
     if (!password) return '';
     try {
       return crypto
@@ -41,19 +38,17 @@ UserSchema.methods = {
         .update(password)
         .digest('hex');
     } catch (err) {
-      console.log(err)
+      
       return '';
     }
   },
   makeSalt: function () {
-    console.log("Making salt");
     return Math.round(new Date().valueOf() * Math.random()) + '';
   },
 };
 
 UserSchema.virtual('password')
   .set(function (password) {
-    console.log("Virtual",password)
     this._password = password;
     this.salt = this.makeSalt();
     this.hashed_password = this.encryptPassword(password);

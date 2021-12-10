@@ -4,8 +4,7 @@ import { validationResult } from 'express-validator';
 import errorHandler from '../helpers/dbErrorHandler.js';
 
 const create = async (req, res, next) => {
-  console.log('Creating User');
-  const user = new User(req.body);
+  const user = new User({name:req.body.name,email:req.body.email,password:req.body.password});
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -21,13 +20,11 @@ const create = async (req, res, next) => {
       });
     }
     await user.save();
-    console.log('Saved user');
     return res.status(200).json({
       success: true,
       msg: 'Successfully signed up',
     });
   } catch (err) {
-    console.log('Errorrr');
     return res.status(500).json({
       success: false,
       msg: err.message,
@@ -52,6 +49,7 @@ const userByID = async (req, res, next, id) => {
       return res.status('400').json({
         error: 'User not found',
       });
+      console.log(req.auth)
     req.profile = user;
     next();
   } catch (err) {
@@ -62,6 +60,8 @@ const userByID = async (req, res, next, id) => {
 };
 const read = (req, res) => {
   console.log("reading")
+  console.log(req.auth)
+
   req.profile.hashed_password = undefined;
   req.profile.salt = undefined;
   return res.json(req.profile);

@@ -30,8 +30,8 @@ const Signin = () => {
     const { email, password } = formData;
     signin({ email, password })
       .then((res) => {
-        const { success, msg, token } = res;
-        authenticate(token, () => {
+        const { success, msg, token,user } = res;
+        authenticate({token,id:user._id}, () => {
           setFormData({
             ...formData,
             email: '',
@@ -43,7 +43,6 @@ const Signin = () => {
       })
       .catch((err) => {
         const { success, msg, field } = err.response.data;
-        console.log(field);
         setFormData({
           ...formData,
           success,

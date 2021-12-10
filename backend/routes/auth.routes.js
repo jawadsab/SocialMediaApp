@@ -18,5 +18,6 @@ router
     authCtrl.signin
   );
 router.route('/auth/signout').get(authCtrl.signout);
+router.route("/auth/isloggedin").get(authCtrl.requireSignin,authCtrl.isLoggedIn);
 
 export default router;

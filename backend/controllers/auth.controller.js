@@ -53,15 +53,22 @@ const requireSignin = expressJwt({
   algorithms: ['HS256'],
   userProperty: 'auth',
 });
+
 const hasAuthorization = (req, res, next) => {
   console.log('AUTHHHHHHHHHHHHH');
   const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
   if (!authorized) {
     return res.status('403').json({
+      success:false,
       error: 'User is not authorized',
     });
   }
   next();
 };
 
-export default { signin, signout, requireSignin, hasAuthorization };
+const isLoggedIn = (req,res) => {
+  console.log("Yes")
+  return res.status("200").json({success:true})
+}
+
+export default { signin, signout, requireSignin, hasAuthorization,isLoggedIn };

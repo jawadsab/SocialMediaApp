@@ -14,9 +14,9 @@ const Profile = () => {
     const signal = abortController.signal;
     const jwt = isAuthenticated();
     console.log(jwt);
-    read({ userId: params.userId }, { t: jwt }, signal)
+    read({ userId: params.userId }, { t: jwt.token }, signal)
       .then((user) => {
-        console.log(user);
+        console.log("USS",user);
       })
       .catch((err) => {
         console.log(err.response);
@@ -27,8 +27,13 @@ const Profile = () => {
   }, [params]);
 
   return (
-    <div>
-      <h1>Profile Page</h1>
+    <div className="profile-page">
+     <div className="my-profile">
+       <h1>User Profile</h1>
+       <p>name: abc</p>
+       <p>Email: abc@gmail.com</p>
+     </div>
+     
     </div>
   );
 };

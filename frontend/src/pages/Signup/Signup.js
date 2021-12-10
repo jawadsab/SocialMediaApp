@@ -33,7 +33,8 @@ const Signup = () => {
     const { name, email, password } = formData;
     create({ name, email, password })
       .then((res) => {
-        const { success, msg } = res.data;
+        console.log(res)
+        const { success, msg } = res;
         setFormData({
           ...formData,
           name: '',
@@ -44,6 +45,7 @@ const Signup = () => {
         });
       })
       .catch((err) => {
+        console.log(err)
         const { success, msg, field } = err.response.data;
         console.log(field);
         setFormData({

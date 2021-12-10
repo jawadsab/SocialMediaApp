@@ -6,6 +6,13 @@ export const signin = async (user) => {
 };
 
 export const signout = async () => {
-  const response = api.get('/auth/signout');
+  const response = await api.get('/auth/signout');
   return await response.json();
 };
+
+export const isLoggedIn = async (token) => {
+  console.log(token)
+  const response = await api.get("/auth/isloggedin",{headers: { Authorization: 'Bearer ' + token}})
+  console.log(response.data)
+  return await response.data;
+}
